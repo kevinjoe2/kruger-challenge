@@ -14,6 +14,8 @@ public interface EmployeeService {
     EmployeeEntity findById(Long id);
     EmployeeInformationResponse information(String token);
     EmployeeResponseDto save(EmployeeRequestDto employeeRequestDto);
+
+    EmployeeInformationResponse saveEmployee(String token, EmployeeInformationResponse employeeRequestDto);
     EmployeeEntity update(Long employeeId, EmployeeRequestDto employeeRequestDto);
     void delete(Long id);
 }

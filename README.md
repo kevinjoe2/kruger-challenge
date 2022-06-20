@@ -52,7 +52,36 @@ Paso 6: Desde postman se puede importar los siguientes CURL:
    --data-urlencode 'username=juanpedro.guidochavez' \
    --data-urlencode 'password=juanpedro.guidochavez'`
 
-4. Consultar la informacion del empleado (*UTILIZAR EL TOKEN DEL EMPLEADO GENERADO EN EL PASO ANTERIOR*):
+3. Consultar la informacion del empleado (*UTILIZAR EL TOKEN DEL EMPLEADO GENERADO EN EL PASO ANTERIOR*):
    `curl --location --request GET 'http://localhost:8081/api/employees/information' \
    --header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqdWFucGVkcm8uZ3VpZG9jaGF2ZXoiLCJyb2xlcyI6WyJST0xFX0VNUExPWUVFIl0sImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MS9hcGkvbG9naW4iLCJleHAiOjE2NTU3NTkxOTR9.FPuxj5Qt1vG2WEHD_UJKNtyvV4k4GUjJ1hm1vHaPNX8' \
    --header 'Cookie: JSESSIONID=5267C34455A30BD4747EBAFD983DEA88'`
+
+4. Actualizar informacion del usuario rol empleado
+   `curl --location --request POST 'http://localhost:8081/api/employees/saveEmployee' \
+   --header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqdWFucGVkcm8uZ3VpZG9jaGF2ZXoiLCJyb2xlcyI6WyJST0xFX0VNUExPWUVFIl0sImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MS9hcGkvbG9naW4iLCJleHAiOjE2NTU3NjIxNDd9.__N5E_J9LyX8sONbQ0Zw4jpCSQoh3C8Kh0BHnO0rjHE' \
+   --header 'Content-Type: application/json' \
+   --header 'Cookie: JSESSIONID=5267C34455A30BD4747EBAFD983DEA88' \
+   --data-raw '{
+   "dateBirth": "1996-01-21",
+   "homeAddress": "La gasca",
+   "mobilePhone": "0996427491",
+   "statusVaccine": "VACCINATED",
+   "vaccines": [
+   {
+   "type":"Sputnik",
+   "date":"2020-01-01",
+   "number":"1"
+   },
+   {
+   "type":"AstraZeneca",
+   "date":"2020-07-03",
+   "number":"2"
+   },
+   {
+   "type":"Pfizer",
+   "date":"2021-03-24",
+   "number":"3"
+   }
+   ]
+   }'`

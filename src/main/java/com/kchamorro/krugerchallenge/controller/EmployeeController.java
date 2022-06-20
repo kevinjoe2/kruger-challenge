@@ -1,6 +1,7 @@
 package com.kchamorro.krugerchallenge.controller;
 
 import com.kchamorro.krugerchallenge.dto.EmployeeInformationResponse;
+import com.kchamorro.krugerchallenge.dto.EmployeeInformationVaccineResponse;
 import com.kchamorro.krugerchallenge.dto.EmployeeRequestDto;
 import com.kchamorro.krugerchallenge.dto.EmployeeResponseDto;
 import com.kchamorro.krugerchallenge.entity.EmployeeEntity;
@@ -38,6 +39,14 @@ public class EmployeeController {
             @Validated @RequestBody EmployeeRequestDto employeeRequestDto
     ){
         return ResponseEntity.ok().body(employeeService.save(employeeRequestDto));
+    }
+
+    @PostMapping("/saveEmployee")
+    public ResponseEntity<EmployeeInformationResponse> save(
+            @RequestHeader("Authorization") String authorization,
+            @Validated @RequestBody EmployeeInformationResponse employeeRequestDto
+    ){
+        return ResponseEntity.ok().body(employeeService.saveEmployee(authorization, employeeRequestDto));
     }
 
     @PutMapping("{employeeId}")

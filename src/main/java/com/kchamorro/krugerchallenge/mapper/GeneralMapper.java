@@ -3,10 +3,7 @@ package com.kchamorro.krugerchallenge.mapper;
 import com.kchamorro.krugerchallenge.dto.EmployeeInformationResponse;
 import com.kchamorro.krugerchallenge.dto.EmployeeInformationVaccineResponse;
 import com.kchamorro.krugerchallenge.dto.EmployeeRequestDto;
-import com.kchamorro.krugerchallenge.entity.ContactEntity;
-import com.kchamorro.krugerchallenge.entity.EmployeeEntity;
-import com.kchamorro.krugerchallenge.entity.RoleEntity;
-import com.kchamorro.krugerchallenge.entity.UserEntity;
+import com.kchamorro.krugerchallenge.entity.*;
 import com.kchamorro.krugerchallenge.util.enumerator.ContactTypeEnum;
 import com.kchamorro.krugerchallenge.util.enumerator.IdentificationTypeEnum;
 import com.kchamorro.krugerchallenge.util.enumerator.VaccineStatusEnum;
@@ -14,6 +11,7 @@ import com.kchamorro.krugerchallenge.util.functions.EmployeeUtil;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -92,7 +90,7 @@ public class GeneralMapper {
         return userEntity;
     }
 
-    public static EmployeeInformationResponse employeeDtoToUserEntity(
+    public static EmployeeInformationResponse employeeEntityToEmployeeInformationResponse(
             EmployeeEntity employeeEntity
     ){
 
@@ -104,12 +102,13 @@ public class GeneralMapper {
                 .dateBirth(employeeEntity.getDateBirth() != null ? employeeEntity.getDateBirth().toString() : "")
                 .homeAddress(employeeEntity.getHomeAddress() != null ? employeeEntity.getHomeAddress() : "")
                 .mobilePhone(mobilPhone != null ? mobilPhone.getValue() : "")
+                .statusVaccine(employeeEntity.getVaccineStatus() != null ? employeeEntity.getVaccineStatus().toString() : "")
                 .vaccines(employeeEntity.getVaccineEntities() != null ?
                         employeeEntity.getVaccineEntities().stream()
                         .map(vaccine ->
                                 EmployeeInformationVaccineResponse
                                         .builder()
-                                        .statusVaccine(VaccineStatusEnum.VACCINATED.toString())
+                                        .type(vaccine.getType().toString())
                                         .date(vaccine.getDate().toString())
                                         .number(String.valueOf(vaccine.getNumberDoses()))
                                         .build()
@@ -117,5 +116,42 @@ public class GeneralMapper {
                         List.of()
                 )
                 .build();
+    }
+
+    public static EmployeeEntity employeeInformationResponseToEmployeeEntity(
+            EmployeeEntity employeeEntity,
+            EmployeeInformationResponse employeeInformationResponse
+    ){
+        employeeEntity.setDateBirth(LocalDate.parse(employeeInformationResponse.getDateBirth()));
+        employeeEntity.setHomeAddress(employeeInformationResponse.getHomeAddress());
+        employeeEntity.setVaccineStatus(VaccineStatusEnum.valueOf(employeeInformationResponse.getStatusVaccine()));
+        return employeeEntity;
+    }
+
+    public static ContactEntity employeeInformationResponseToContactEntity(
+            EmployeeInformationResponse employeeInformationResponse,
+            ContactTypeEnum contactTypeEnum
+    ){
+        ContactEntity contactEntity = new ContactEntity();
+        contactEntity.setType(contactTypeEnum);
+        contactEntity.setValue(employeeInformationResponse.getMobilePhone());
+        return contactEntity;
+    }
+
+    public static List<VaccineEntity> employeeInformationResponseToVaccineEntity(
+            EmployeeInformationResponse employeeInformationResponse,
+            List<VaccineTypeEntity> vaccineTypeEntities
+    ){
+
+        List<VaccineEntity> vaccineEntities = new ArrayList<>();
+        for (EmployeeInformationVaccineResponse vaccine : employeeInformationResponse.getVaccines()) {
+            VaccineEntity vaccineEntity = new VaccineEntity();
+            vaccineEntity.setDate(LocalDate.parse(vaccine.getDate()));
+            vaccineEntity.setNumberDoses(Integer.parseInt(vaccine.getNumber()));
+            if (vaccineTypeEntities.stream().anyMatch(vaccineF -> vaccine.getType().equals(vaccineF.getName())))
+                vaccineEntity.setType(vaccineTypeEntities.stream().filter(vaccineF -> vaccine.getType().equals(vaccineF.getName())).findFirst().get());
+            vaccineEntities.add(vaccineEntity);
+        }
+        return vaccineEntities;
     }
 }

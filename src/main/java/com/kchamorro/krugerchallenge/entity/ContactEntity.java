@@ -1,10 +1,7 @@
 package com.kchamorro.krugerchallenge.entity;
 
 import com.kchamorro.krugerchallenge.util.enumerator.ContactTypeEnum;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -13,6 +10,7 @@ import javax.persistence.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class ContactEntity {
 
     @Id

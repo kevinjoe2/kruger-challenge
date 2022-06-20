@@ -8,7 +8,7 @@ import java.io.Serializable;
 @Data
 @Builder
 public class EmployeeInformationVaccineResponse implements Serializable {
-    private String statusVaccine;
+    private String type;
     private String date;
     private String number;
 }

@@ -12,5 +12,6 @@ public class EmployeeInformationResponse implements Serializable {
     private String dateBirth;
     private String homeAddress;
     private String mobilePhone;
+    private String statusVaccine;
     private List<EmployeeInformationVaccineResponse> vaccines;
 }

@@ -3,14 +3,12 @@ package com.kchamorro.krugerchallenge.service.Impl;
 import com.kchamorro.krugerchallenge.dto.EmployeeInformationResponse;
 import com.kchamorro.krugerchallenge.dto.EmployeeRequestDto;
 import com.kchamorro.krugerchallenge.dto.EmployeeResponseDto;
-import com.kchamorro.krugerchallenge.entity.ContactEntity;
-import com.kchamorro.krugerchallenge.entity.EmployeeEntity;
-import com.kchamorro.krugerchallenge.entity.RoleEntity;
-import com.kchamorro.krugerchallenge.entity.UserEntity;
+import com.kchamorro.krugerchallenge.entity.*;
 import com.kchamorro.krugerchallenge.mapper.GeneralMapper;
 import com.kchamorro.krugerchallenge.repository.*;
 import com.kchamorro.krugerchallenge.security.CustomDecodeJWT;
 import com.kchamorro.krugerchallenge.service.EmployeeService;
+import com.kchamorro.krugerchallenge.util.enumerator.ContactTypeEnum;
 import com.kchamorro.krugerchallenge.util.enumerator.EmployeeValidatorTypeEnum;
 import com.kchamorro.krugerchallenge.util.enumerator.RoleEnum;
 import com.kchamorro.krugerchallenge.util.functions.EmployeeUtil;
@@ -32,6 +30,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final ContactRepository contactRepository;
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
+    private final VaccineRepository vaccineRepository;
+    private final VaccineTypeRepository vaccineTypeRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -47,10 +47,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public EmployeeInformationResponse information(String token) {
         String username = CustomDecodeJWT.getUsername(token);
-        log.info("Username {}",username);
         EmployeeEntity employeeEntity = employeeRepository.findByUsername(username);
-        log.info(employeeEntity.toString());
-        return GeneralMapper.employeeDtoToUserEntity(employeeEntity);
+        return GeneralMapper.employeeEntityToEmployeeInformationResponse(employeeEntity);
     }
 
     @Override
@@ -84,6 +82,43 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .username(userEntity.getUsername())
                 .password(password)
                 .build();
+    }
+
+    @Override
+    @Transactional
+    public EmployeeInformationResponse saveEmployee(
+            String token,
+            EmployeeInformationResponse employeeRequestDto
+    ) {
+
+        String username = CustomDecodeJWT.getUsername(token);
+        EmployeeEntity employeeEntity = employeeRepository.findByUsername(username);
+
+        // MAPPER INFORMATION EMPLOYEE
+        GeneralMapper.employeeInformationResponseToEmployeeEntity(
+                employeeEntity, employeeRequestDto);
+
+        // UPDATE CONTACT MOBIL PHONE
+        ContactEntity contactEntity
+                = GeneralMapper.employeeInformationResponseToContactEntity(
+                        employeeRequestDto, ContactTypeEnum.MOBIL_PHONE);
+        contactRepository.save(contactEntity);
+        employeeEntity.getContacts().add(contactEntity);
+
+        // UPDATE VACCINE
+        List<VaccineEntity> vaccineEntities = GeneralMapper.employeeInformationResponseToVaccineEntity(
+                employeeRequestDto,
+                vaccineTypeRepository.findAll());
+        vaccineRepository.saveAll(vaccineEntities);
+        employeeEntity.getVaccineEntities().addAll(vaccineEntities);
+
+        // UPDATE EMPLOYEE
+        employeeRepository.save(employeeEntity);
+
+        return GeneralMapper
+                .employeeEntityToEmployeeInformationResponse(
+                        employeeEntity
+                );
     }
 
     @Override
@@ -134,24 +169,24 @@ public class EmployeeServiceImpl implements EmployeeService {
     private void validateEmployee(
             EmployeeRequestDto employeeRequestDto,
             EmployeeValidatorTypeEnum validatorTypeEnum
-    ){
+    ) {
 
         if (!employeeRequestDto.getIdentificationCard().matches("[0-9]+"))
             throw new RuntimeException("Identification only numbers");
         if (employeeRequestDto.getIdentificationCard().length() != 10)
             throw new RuntimeException("Identification must have 10 digits");
         if (!employeeRequestDto.getEmail().matches("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
-                        + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"))
+                + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"))
             throw new RuntimeException("Invalid email");
-        if (!employeeRequestDto.getNames().replace(" ","").matches("^[a-zA-Z]*$"))
+        if (!employeeRequestDto.getNames().replace(" ", "").matches("^[a-zA-Z]*$"))
             throw new RuntimeException("Invalid names");
-        if (!employeeRequestDto.getLastnames().replace(" ","").matches("^[a-zA-Z]*$"))
+        if (!employeeRequestDto.getLastnames().replace(" ", "").matches("^[a-zA-Z]*$"))
             throw new RuntimeException("Invalid lastnames");
 
         if (validatorTypeEnum.equals(EmployeeValidatorTypeEnum.SAVE)) {
-            if (employeeRepository.findByUsername(EmployeeUtil.generateUsername(employeeRequestDto))!=null)
+            if (employeeRepository.findByUsername(EmployeeUtil.generateUsername(employeeRequestDto)) != null)
                 throw new RuntimeException("Username Employee already exists");
-            if (personRepository.findByIdentification(employeeRequestDto.getIdentificationCard())!=null)
+            if (personRepository.findByIdentification(employeeRequestDto.getIdentificationCard()) != null)
                 throw new RuntimeException("Identification Employee already exists");
         }
     }

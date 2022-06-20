@@ -2,10 +2,7 @@ package com.kchamorro.krugerchallenge.entity;
 
 import com.kchamorro.krugerchallenge.util.enumerator.IdentificationTypeEnum;
 import com.kchamorro.krugerchallenge.util.enumerator.VaccineStatusEnum;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -18,6 +15,7 @@ import java.util.Collection;
 @NoArgsConstructor
 @Inheritance(strategy=InheritanceType.JOINED)
 @DiscriminatorColumn( name="person_type", discriminatorType = DiscriminatorType.STRING )
+@ToString
 public class PersonEntity {
 
     @Id

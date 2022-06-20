@@ -9,6 +9,7 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class RoleEntity {
 
     @Id

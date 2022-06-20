@@ -44,7 +44,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests().antMatchers().denyAll();
         http.authorizeRequests().antMatchers("/api/login").permitAll();
-        http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/employees/information").hasAnyAuthority(RoleEnum.ROLE_EMPLOYEE.toString(),RoleEnum.ROLE_ADMINISTRATOR.toString());
+        http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/employees/information").hasAnyAuthority(RoleEnum.ROLE_EMPLOYEE.toString());
+        http.authorizeRequests().antMatchers(HttpMethod.POST,"/api/employees/saveEmployee").hasAnyAuthority(RoleEnum.ROLE_EMPLOYEE.toString());
         http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/employees").hasAnyAuthority(RoleEnum.ROLE_ADMINISTRATOR.toString());
         http.authorizeRequests().antMatchers(HttpMethod.POST,"/api/employees").hasAnyAuthority(RoleEnum.ROLE_ADMINISTRATOR.toString());
         http.authorizeRequests().anyRequest().authenticated();
