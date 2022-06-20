@@ -1,50 +1,7 @@
 
-    alter table contacts 
-       drop constraint FK6nub6aw6lxxpjiwh4wcr1emgq;
+	CREATE ROLE kchamorro NOSUPERUSER CREATEDB NOCREATEROLE NOINHERIT LOGIN NOREPLICATION NOBYPASSRLS PASSWORD 'kchamorro';
 
-    alter table employees 
-       drop constraint FKsfxfst8b5qgcjmw6nlktd94jh;
-
-    alter table persons_contacts 
-       drop constraint FK1s8dyusmh6ojy9r8353i5fp1c;
-
-    alter table persons_contacts 
-       drop constraint FK7u31hryng4jawi2eadd9no8gs;
-
-    alter table persons_vaccine_entities 
-       drop constraint FKgehpmte1rftjxlx4ug1rt7vu8;
-
-    alter table persons_vaccine_entities 
-       drop constraint FKca9poqddtyfq6jxlxowfvvwl;
-
-    alter table users_roles 
-       drop constraint FKa62j07k5mhgifpp955h37ponj;
-
-    alter table users_roles 
-       drop constraint FKml90kef4w2jy7oxyqv742tsfc;
-
-    alter table vaccines 
-       drop constraint FKjqnposhodprbvvvu63wf42vyq;
-
-    drop table if exists contacts cascade;
-
-    drop table if exists employees cascade;
-
-    drop table if exists persons cascade;
-
-    drop table if exists persons_contacts cascade;
-
-    drop table if exists persons_vaccine_entities cascade;
-
-    drop table if exists roles cascade;
-
-    drop table if exists users cascade;
-
-    drop table if exists users_roles cascade;
-
-    drop table if exists vaccine_types cascade;
-
-    drop table if exists vaccines cascade;
+	CREATE DATABASE db_kruger_challenge OWNER kchamorro;
 
     create table contacts (
        id  bigserial not null,
@@ -59,6 +16,7 @@
         status varchar(255),
         workstation varchar(255),
         id int8 not null,
+        user_id int8,
         primary key (id)
     );
 
@@ -66,7 +24,7 @@
        person_type varchar(31) not null,
         id  bigserial not null,
         second_surname varchar(255),
-        date_birth varchar(255),
+        date_birth date,
         first_name varchar(255),
         first_surname varchar(255),
         home_address varchar(255),
@@ -128,6 +86,11 @@
        references persons;
 
     alter table employees 
+       add constraint FK69x3vjuy1t5p18a5llb8h2fjx 
+       foreign key (user_id) 
+       references users;
+
+    alter table employees 
        add constraint FKsfxfst8b5qgcjmw6nlktd94jh 
        foreign key (id) 
        references persons;
@@ -166,3 +129,4 @@
        add constraint FKjqnposhodprbvvvu63wf42vyq 
        foreign key (type_id) 
        references vaccine_types;
+	

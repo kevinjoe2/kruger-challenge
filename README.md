@@ -29,19 +29,30 @@ Paso 5: Por defecto se crea un usuario administrador
   --header 'Cookie: JSESSIONID=5267C34455A30BD4747EBAFD983DEA88' \
   --data-urlencode 'username=kChamorro' \
   --data-urlencode 'password=123456'`
-- Nota.: El token es necesario para poder acceder a cualquier endpoint
+- *Nota.: El token es necesario para poder acceder a cualquier endpoint*
 
 Paso 6: Desde postman se puede importar los siguientes CURL:
 
-1. Crear un empleado:
+1. Crear un empleado (*UTILIZAR EL TOKEN DEL ADMINISTRADOR GENERADO EN EL PASO ANTERIOR*):
 `curl --location --request POST 'http://localhost:8081/api/employees' \
---header 'Authorization: Bearer TOKEN_HERE' \
---header 'Content-Type: application/json' \
---header 'Cookie: JSESSIONID=5267C34455A30BD4747EBAFD983DEA88' \
---data-raw '{
-"identificationCard":"1701859300",
-"names":"Juan Pedro",
-"lastnames":"Guido Chavez",
-"email":"guido@hotmail.com"
-}'`
+   --header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrQ2hhbW9ycm8iLCJyb2xlcyI6WyJST0xFX0FETUlOSVNUUkFUT1IiXSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgxL2FwaS9sb2dpbiIsImV4cCI6MTY1NTc1OTEyN30.GJyQ0HEiQUw-4-t3AsG1t5mSkjSw9JakdQBB4nQHvMw' \
+   --header 'Content-Type: application/json' \
+   --header 'Cookie: JSESSIONID=5267C34455A30BD4747EBAFD983DEA88' \
+   --data-raw '{
+   "identificationCard":"0401859376",
+   "names":"Juan Pedro",
+   "lastnames":"Guido Chavez",
+   "email":"guido@hotmail.com"
+   }'`
 
+2. Generar token del empleado creado (*UTILIZAR EL USUARIO Y CONTRASEÑA GENERADO EN EL PASO ANTERIOR*)
+   `curl --location --request POST 'http://localhost:8081/api/login' \
+   --header 'Content-Type: application/x-www-form-urlencoded' \
+   --header 'Cookie: JSESSIONID=5267C34455A30BD4747EBAFD983DEA88' \
+   --data-urlencode 'username=juanpedro.guidochavez' \
+   --data-urlencode 'password=juanpedro.guidochavez'`
+
+4. Consultar la informacion del empleado (*UTILIZAR EL TOKEN DEL EMPLEADO GENERADO EN EL PASO ANTERIOR*):
+   `curl --location --request GET 'http://localhost:8081/api/employees/information' \
+   --header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqdWFucGVkcm8uZ3VpZG9jaGF2ZXoiLCJyb2xlcyI6WyJST0xFX0VNUExPWUVFIl0sImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MS9hcGkvbG9naW4iLCJleHAiOjE2NTU3NTkxOTR9.FPuxj5Qt1vG2WEHD_UJKNtyvV4k4GUjJ1hm1vHaPNX8' \
+   --header 'Cookie: JSESSIONID=5267C34455A30BD4747EBAFD983DEA88'`

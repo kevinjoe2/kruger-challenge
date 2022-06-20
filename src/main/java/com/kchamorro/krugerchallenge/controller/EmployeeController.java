@@ -1,5 +1,6 @@
 package com.kchamorro.krugerchallenge.controller;
 
+import com.kchamorro.krugerchallenge.dto.EmployeeInformationResponse;
 import com.kchamorro.krugerchallenge.dto.EmployeeRequestDto;
 import com.kchamorro.krugerchallenge.dto.EmployeeResponseDto;
 import com.kchamorro.krugerchallenge.entity.EmployeeEntity;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "api/employees")
+@RequestMapping(path = "/api/employees")
 @AllArgsConstructor
 @Slf4j
 public class EmployeeController {
@@ -25,11 +26,11 @@ public class EmployeeController {
         return ResponseEntity.ok().body(employeeService.list());
     }
 
-    @GetMapping("{employeeId}")
-    public ResponseEntity<EmployeeEntity> findById(
-            @PathVariable Long employeeId
+    @GetMapping("/information")
+    public ResponseEntity<EmployeeInformationResponse> information(
+            @RequestHeader("Authorization") String authorization
     ){
-        return ResponseEntity.ok().body(employeeService.findById(employeeId));
+        return ResponseEntity.ok().body(employeeService.information(authorization));
     }
 
     @PostMapping

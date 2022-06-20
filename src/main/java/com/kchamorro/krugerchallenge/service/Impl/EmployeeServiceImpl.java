@@ -1,5 +1,6 @@
 package com.kchamorro.krugerchallenge.service.Impl;
 
+import com.kchamorro.krugerchallenge.dto.EmployeeInformationResponse;
 import com.kchamorro.krugerchallenge.dto.EmployeeRequestDto;
 import com.kchamorro.krugerchallenge.dto.EmployeeResponseDto;
 import com.kchamorro.krugerchallenge.entity.ContactEntity;
@@ -7,14 +8,14 @@ import com.kchamorro.krugerchallenge.entity.EmployeeEntity;
 import com.kchamorro.krugerchallenge.entity.RoleEntity;
 import com.kchamorro.krugerchallenge.entity.UserEntity;
 import com.kchamorro.krugerchallenge.mapper.GeneralMapper;
-import com.kchamorro.krugerchallenge.repository.ContactRepository;
-import com.kchamorro.krugerchallenge.repository.EmployeeRepository;
-import com.kchamorro.krugerchallenge.repository.RoleRepository;
-import com.kchamorro.krugerchallenge.repository.UserRepository;
+import com.kchamorro.krugerchallenge.repository.*;
+import com.kchamorro.krugerchallenge.security.CustomDecodeJWT;
 import com.kchamorro.krugerchallenge.service.EmployeeService;
+import com.kchamorro.krugerchallenge.util.enumerator.EmployeeValidatorTypeEnum;
 import com.kchamorro.krugerchallenge.util.enumerator.RoleEnum;
 import com.kchamorro.krugerchallenge.util.functions.EmployeeUtil;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,8 +24,10 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class EmployeeServiceImpl implements EmployeeService {
 
+    private final PersonRepository personRepository;
     private final EmployeeRepository employeeRepository;
     private final ContactRepository contactRepository;
     private final RoleRepository roleRepository;
@@ -42,13 +45,19 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    public EmployeeInformationResponse information(String token) {
+        String username = CustomDecodeJWT.getUsername(token);
+        log.info("Username {}",username);
+        EmployeeEntity employeeEntity = employeeRepository.findByUsername(username);
+        log.info(employeeEntity.toString());
+        return GeneralMapper.employeeDtoToUserEntity(employeeEntity);
+    }
+
+    @Override
     @Transactional
     public EmployeeResponseDto save(EmployeeRequestDto employeeRequestDto) {
 
-        validateEmployee(employeeRequestDto);
-
-        EmployeeEntity employeeEntity = GeneralMapper.employeeDtoToEmployeeEntity(employeeRequestDto);
-        ContactEntity contactEntity = GeneralMapper.employeeDtoToContactEntity(employeeRequestDto, employeeEntity);
+        validateEmployee(employeeRequestDto, EmployeeValidatorTypeEnum.SAVE);
 
         RoleEntity roleEntity = roleRepository.findFirstByName(RoleEnum.ROLE_EMPLOYEE.toString());
 
@@ -64,9 +73,12 @@ public class EmployeeServiceImpl implements EmployeeService {
                         roleEntity
                 );
 
+        EmployeeEntity employeeEntity = GeneralMapper.employeeDtoToEmployeeEntity(employeeRequestDto, userEntity);
+        ContactEntity contactEntity = GeneralMapper.employeeDtoToContactEntity(employeeRequestDto, employeeEntity);
+
+        userRepository.save(userEntity);
         employeeRepository.save(employeeEntity);
         contactRepository.save(contactEntity);
-        userRepository.save(userEntity);
 
         return EmployeeResponseDto.builder()
                 .username(userEntity.getUsername())
@@ -78,7 +90,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Transactional
     public EmployeeEntity update(Long employeeId, EmployeeRequestDto employeeRequestDto) {
 
-        validateEmployee(employeeRequestDto);
+        validateEmployee(employeeRequestDto, EmployeeValidatorTypeEnum.UPDATE);
 
         EmployeeEntity employeeEntityDb = employeeRepository.findById(employeeId).orElse(null);
 
@@ -86,7 +98,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
             EmployeeEntity employeeEntity =
                     GeneralMapper.employeeEntityToEmployeeEntityDb(
-                            GeneralMapper.employeeDtoToEmployeeEntity(employeeRequestDto),
+                            GeneralMapper.employeeDtoToEmployeeEntity(employeeRequestDto, employeeEntityDb.getUser()),
                             employeeEntityDb);
 
             ContactEntity contactEntityDb = employeeEntity.getContacts().stream()
@@ -119,16 +131,28 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeRepository.deleteById(id);
     }
 
-    private void validateEmployee(EmployeeRequestDto employeeRequestDto){
+    private void validateEmployee(
+            EmployeeRequestDto employeeRequestDto,
+            EmployeeValidatorTypeEnum validatorTypeEnum
+    ){
+
         if (!employeeRequestDto.getIdentificationCard().matches("[0-9]+"))
             throw new RuntimeException("Identification only numbers");
         if (employeeRequestDto.getIdentificationCard().length() != 10)
             throw new RuntimeException("Identification must have 10 digits");
-//        if (!employeeRequestDto.getEmail().matches("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\\\.[A-Z]{2,6}$"))
-//            throw new RuntimeException("Invalid email");
-//        if (!employeeRequestDto.getNames().matches("[a-zA-Z]+"))
-//            throw new RuntimeException("Invalid names");
-//        if (!employeeRequestDto.getLastnames().matches("[a-zA-Z]+"))
-//            throw new RuntimeException("Invalid lastnames");
+        if (!employeeRequestDto.getEmail().matches("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+                        + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"))
+            throw new RuntimeException("Invalid email");
+        if (!employeeRequestDto.getNames().replace(" ","").matches("^[a-zA-Z]*$"))
+            throw new RuntimeException("Invalid names");
+        if (!employeeRequestDto.getLastnames().replace(" ","").matches("^[a-zA-Z]*$"))
+            throw new RuntimeException("Invalid lastnames");
+
+        if (validatorTypeEnum.equals(EmployeeValidatorTypeEnum.SAVE)) {
+            if (employeeRepository.findByUsername(EmployeeUtil.generateUsername(employeeRequestDto))!=null)
+                throw new RuntimeException("Username Employee already exists");
+            if (personRepository.findByIdentification(employeeRequestDto.getIdentificationCard())!=null)
+                throw new RuntimeException("Identification Employee already exists");
+        }
     }
 }

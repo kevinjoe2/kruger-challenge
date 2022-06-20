@@ -35,20 +35,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.authorizeRequests().antMatchers("/api/login/**").permitAll();
-        http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/users**").hasAnyAuthority(RoleEnum.ROLE_ADMINISTRATOR.toString());
-        http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/users/**").hasAnyAuthority(RoleEnum.ROLE_EMPLOYEE.toString());
-        http.authorizeRequests().antMatchers(HttpMethod.POST,"/api/users/**").hasAnyAuthority(RoleEnum.ROLE_ADMINISTRATOR.toString());
-        http.authorizeRequests().antMatchers(HttpMethod.POST,"/api/employees**").hasAnyAuthority(RoleEnum.ROLE_ADMINISTRATOR.toString());
-        http.authorizeRequests().anyRequest().authenticated();
+        http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.anonymous().disable();
 
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean());
         customAuthenticationFilter.setFilterProcessesUrl("/api/login");
         http.addFilter(customAuthenticationFilter);
 
-        http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
-
-        http.anonymous().disable();
+        http.authorizeRequests().antMatchers().denyAll();
+        http.authorizeRequests().antMatchers("/api/login").permitAll();
+        http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/employees/information").hasAnyAuthority(RoleEnum.ROLE_EMPLOYEE.toString(),RoleEnum.ROLE_ADMINISTRATOR.toString());
+        http.authorizeRequests().antMatchers(HttpMethod.GET,"/api/employees").hasAnyAuthority(RoleEnum.ROLE_ADMINISTRATOR.toString());
+        http.authorizeRequests().antMatchers(HttpMethod.POST,"/api/employees").hasAnyAuthority(RoleEnum.ROLE_ADMINISTRATOR.toString());
+        http.authorizeRequests().anyRequest().authenticated();
 
         http.exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler());
         http.formLogin().failureHandler(new CustomAuthenticationFailureHandler());

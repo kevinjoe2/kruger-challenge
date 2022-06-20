@@ -22,4 +22,9 @@ public class RoleServiceImpl implements RoleService {
     public void deleteAll() {
         roleRepository.deleteAll();
     }
+
+    @Override
+    public RoleEntity findByName(String name) {
+        return roleRepository.findFirstByName(name);
+    }
 }

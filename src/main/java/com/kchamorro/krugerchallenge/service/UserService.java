@@ -8,4 +8,6 @@ public interface UserService {
     List<UserEntity> get();
     UserEntity save(UserEntity userEntity);
     void deleteAll();
+    UserEntity findByUsername(String username);
+    void deleteByUsername(String username);
 }

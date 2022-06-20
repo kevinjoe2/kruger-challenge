@@ -49,4 +49,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public void deleteAll() {
         userRepository.deleteAll();
     }
+
+    @Override
+    public void deleteByUsername(String username) {
+        userRepository.deleteByUsername(username);
+    }
+
+    @Override
+    public UserEntity findByUsername(String username) {
+        return userRepository.findFirstByUsername(username);
+    }
 }
