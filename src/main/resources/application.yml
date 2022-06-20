@@ -1,0 +1,26 @@
+server:
+  port: 8081
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/db_kruger_challenge
+    username: kchamorro
+    password: kchamorro
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    show-sql: true
+#    hibernate:
+#      ddl-auto: create-drop
+    properties:
+      javax:
+        persistence:
+          schema-generation:
+            scripts:
+              action: drop-and-create
+              create-target: DataBase.sql
+              drop-target: DataBase.sql
+              create-source: metadata
+              drop-source: metadata
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
