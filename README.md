@@ -57,7 +57,7 @@ Paso 6: Desde postman se puede importar los siguientes CURL:
    --header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqdWFucGVkcm8uZ3VpZG9jaGF2ZXoiLCJyb2xlcyI6WyJST0xFX0VNUExPWUVFIl0sImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MS9hcGkvbG9naW4iLCJleHAiOjE2NTU3NTkxOTR9.FPuxj5Qt1vG2WEHD_UJKNtyvV4k4GUjJ1hm1vHaPNX8' \
    --header 'Cookie: JSESSIONID=5267C34455A30BD4747EBAFD983DEA88'`
 
-4. Actualizar informacion del usuario rol empleado
+4. Actualizar informacion del usuario rol empleado (*UTILIZAR EL TOKEN DEL EMPLEADO*)
    `curl --location --request POST 'http://localhost:8081/api/employees/saveEmployee' \
    --header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqdWFucGVkcm8uZ3VpZG9jaGF2ZXoiLCJyb2xlcyI6WyJST0xFX0VNUExPWUVFIl0sImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MS9hcGkvbG9naW4iLCJleHAiOjE2NTU3NjIxNDd9.__N5E_J9LyX8sONbQ0Zw4jpCSQoh3C8Kh0BHnO0rjHE' \
    --header 'Content-Type: application/json' \
