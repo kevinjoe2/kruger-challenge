@@ -1,7 +1,6 @@
 package com.kchamorro.krugerchallenge.controller;
 
 import com.kchamorro.krugerchallenge.dto.EmployeeInformationResponse;
-import com.kchamorro.krugerchallenge.dto.EmployeeInformationVaccineResponse;
 import com.kchamorro.krugerchallenge.dto.EmployeeRequestDto;
 import com.kchamorro.krugerchallenge.dto.EmployeeResponseDto;
 import com.kchamorro.krugerchallenge.entity.EmployeeEntity;
@@ -23,8 +22,23 @@ public class EmployeeController {
     private EmployeeService employeeService;
 
     @GetMapping
-    public ResponseEntity<List<EmployeeEntity>> list(){
+    public ResponseEntity<List<EmployeeInformationResponse>> list(){
         return ResponseEntity.ok().body(employeeService.list());
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<EmployeeInformationResponse>> search(
+            @RequestParam(value = "statusVaccine", required = false) String statusVaccine,
+            @RequestParam(value = "typeVaccine", required = false) String typeVaccine,
+            @RequestParam(value = "dateFromVaccine", required = false) String dateFromVaccine,
+            @RequestParam(value = "dateToVaccine", required = false) String dateToVaccine
+    ){
+        log.info("statusVaccine:{}",statusVaccine);
+        log.info("typeVaccine:{}",typeVaccine);
+        log.info("dateFromVaccine:{}",dateFromVaccine);
+        log.info("dateToVaccine:{}",dateToVaccine);
+        return ResponseEntity.ok().body(employeeService.search(
+                statusVaccine,typeVaccine,dateFromVaccine,dateToVaccine));
     }
 
     @GetMapping("/information")

@@ -11,6 +11,7 @@ import com.kchamorro.krugerchallenge.service.EmployeeService;
 import com.kchamorro.krugerchallenge.util.enumerator.ContactTypeEnum;
 import com.kchamorro.krugerchallenge.util.enumerator.EmployeeValidatorTypeEnum;
 import com.kchamorro.krugerchallenge.util.enumerator.RoleEnum;
+import com.kchamorro.krugerchallenge.util.enumerator.VaccineStatusEnum;
 import com.kchamorro.krugerchallenge.util.functions.EmployeeUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +19,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -35,8 +38,59 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public List<EmployeeEntity> list() {
-        return employeeRepository.findAll();
+    public List<EmployeeInformationResponse> list() {
+        return employeeRepository.findAll().stream()
+                .map(GeneralMapper::employeeEntityToEmployeeInformationResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<EmployeeInformationResponse> search(
+            String statusVaccine,
+            String typeVaccine,
+            String dateFromVaccine,
+            String dateToVaccine
+    ) {
+        return employeeRepository.findAll().stream()
+                .filter(employee -> {
+                    if (statusVaccine != null && !statusVaccine.isBlank())
+                        return employee.getVaccineStatus().equals(VaccineStatusEnum.valueOf(statusVaccine));
+                    else
+                        return true;
+                })
+                .filter(employee -> {
+                    if (typeVaccine != null && !typeVaccine.isBlank())
+                        return employee
+                                .getVaccineEntities()
+                                .stream()
+                                .anyMatch(vaccine -> vaccine.getType().getName().equals(typeVaccine));
+                    else
+                        return true;
+                })
+                .filter(employee -> {
+                    if (dateFromVaccine != null && !dateFromVaccine.isBlank()
+                            && !employee.getVaccineEntities().isEmpty())
+                        return employee
+                                .getVaccineEntities()
+                                .stream()
+                                .anyMatch(vaccine -> vaccine.getDate().isAfter(LocalDate.parse(dateFromVaccine))
+                                        || vaccine.getDate().isEqual(LocalDate.parse(dateToVaccine)));
+                    else
+                        return true;
+                })
+                .filter(employee -> {
+                    if (dateToVaccine != null && !dateToVaccine.isBlank()
+                            && !employee.getVaccineEntities().isEmpty())
+                        return employee
+                                .getVaccineEntities()
+                                .stream()
+                                .anyMatch(vaccine -> vaccine.getDate().isBefore(LocalDate.parse(dateToVaccine))
+                                        || vaccine.getDate().isEqual(LocalDate.parse(dateToVaccine)));
+                    else
+                        return true;
+                })
+                .map(GeneralMapper::employeeEntityToEmployeeInformationResponse)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -101,7 +155,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         // UPDATE CONTACT MOBIL PHONE
         ContactEntity contactEntity
                 = GeneralMapper.employeeInformationResponseToContactEntity(
-                        employeeRequestDto, ContactTypeEnum.MOBIL_PHONE);
+                employeeRequestDto, ContactTypeEnum.MOBIL_PHONE);
         contactRepository.save(contactEntity);
         employeeEntity.getContacts().add(contactEntity);
 

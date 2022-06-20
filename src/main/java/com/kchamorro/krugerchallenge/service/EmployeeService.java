@@ -10,7 +10,13 @@ import java.util.List;
 
 @Service
 public interface EmployeeService {
-    List<EmployeeEntity> list();
+    List<EmployeeInformationResponse> list();
+    List<EmployeeInformationResponse> search(
+            String statusVaccine,
+            String typeVaccine,
+            String dateFromVaccine,
+            String dateToVaccine
+    );
     EmployeeEntity findById(Long id);
     EmployeeInformationResponse information(String token);
     EmployeeResponseDto save(EmployeeRequestDto employeeRequestDto);

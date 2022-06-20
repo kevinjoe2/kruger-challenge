@@ -1,0 +1,265 @@
+{
+	"info": {
+		"_postman_id": "231d0150-d7e2-44f4-9558-a0bbe39e1cc6",
+		"name": "KRUGGER",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "5083357"
+	},
+	"item": [
+		{
+			"name": "ADMIN",
+			"item": [
+				{
+					"name": "GenereteTokenAdministrator",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "kChamorro",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "123456",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SaveEmployee",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrQ2hhbW9ycm8iLCJyb2xlcyI6WyJST0xFX0FETUlOSVNUUkFUT1IiXSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgxL2FwaS9sb2dpbiIsImV4cCI6MTY1NTc1OTEyN30.GJyQ0HEiQUw-4-t3AsG1t5mSkjSw9JakdQBB4nQHvMw",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"identificationCard\":\"0401859376\",\r\n    \"names\":\"Juan Pedro\",\r\n    \"lastnames\":\"Guido Chavez\",\r\n    \"email\":\"guido@hotmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/employees",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"employees"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrQ2hhbW9ycm8iLCJyb2xlcyI6WyJST0xFX0FETUlOSVNUUkFUT1IiXSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgxL2FwaS9sb2dpbiIsImV4cCI6MTY1NTc2NTE1OH0.BNKKXD54xdRV8kkVrZaVSEVJLLnZ8PDHNKNB0tvCoVQ",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8081/api/employees/search?statusVaccine=VACCINATED&typeVaccine=Pfizer&dateFromVaccine=2020-01-01&dateToVaccine=2020-02-01",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"employees",
+								"search"
+							],
+							"query": [
+								{
+									"key": "statusVaccine",
+									"value": "VACCINATED"
+								},
+								{
+									"key": "typeVaccine",
+									"value": "Pfizer"
+								},
+								{
+									"key": "dateFromVaccine",
+									"value": "2020-01-01"
+								},
+								{
+									"key": "dateToVaccine",
+									"value": "2020-02-01"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "EMPLOYEE",
+			"item": [
+				{
+					"name": "GenereteTokenEmployee",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "juanpedro.guidochavez",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "juanpedro.guidochavez",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "InformationEmployee",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqdWFucGVkcm8uZ3VpZG9jaGF2ZXoiLCJyb2xlcyI6WyJST0xFX0VNUExPWUVFIl0sImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MS9hcGkvbG9naW4iLCJleHAiOjE2NTU3NTkxOTR9.FPuxj5Qt1vG2WEHD_UJKNtyvV4k4GUjJ1hm1vHaPNX8",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8081/api/employees/information",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"employees",
+								"information"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SaveEmployee",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqdWFucGVkcm8uZ3VpZG9jaGF2ZXoiLCJyb2xlcyI6WyJST0xFX0VNUExPWUVFIl0sImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MS9hcGkvbG9naW4iLCJleHAiOjE2NTU3NjIxNDd9.__N5E_J9LyX8sONbQ0Zw4jpCSQoh3C8Kh0BHnO0rjHE",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"dateBirth\": \"1996-01-21\",\r\n    \"homeAddress\": \"La gasca\",\r\n    \"mobilePhone\": \"0996427491\",\r\n    \"statusVaccine\": \"VACCINATED\",\r\n    \"vaccines\": [\r\n        {\r\n            \"type\":\"Sputnik\",\r\n            \"date\":\"2020-01-01\",\r\n            \"number\":\"1\"\r\n        },\r\n        {\r\n            \"type\":\"AstraZeneca\",\r\n            \"date\":\"2020-07-03\",\r\n            \"number\":\"2\"\r\n        },\r\n        {\r\n            \"type\":\"Pfizer\",\r\n            \"date\":\"2021-03-24\",\r\n            \"number\":\"3\"\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/employees/saveEmployee",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"employees",
+								"saveEmployee"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "basePath",
+			"value": "http://localhost:8585/v1.0.0",
+			"type": "string"
+		},
+		{
+			"key": "login",
+			"value": "oauth/client_credential/accessToken",
+			"type": "string"
+		}
+	]
+}

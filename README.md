@@ -12,7 +12,7 @@ Paso 1: Para iniciar con la ejecucion del proyecto es necesario los siguientes r
 - Gradle ultima version
 - Postgresql ultima version
 
-Paso 2: Conar el proyecto
+Paso 2: Clonar el proyecto
 
 Paso 3: Crear la base de datos Postgresql:
 - Instalar en la maquina local un motor postgres
@@ -21,6 +21,9 @@ Paso 3: Crear la base de datos Postgresql:
 Paso 4: Dentro de la carpeta del proyecto ejecutar los siguientes comandos:
 - gradle clean build
 - gradle bootRun
+
+### En la raiz del proyecto se encuentra exportado los Endpoint en formato Postman
+- `KRUGGER.postman_collection.json`
 
 Paso 5: Por defecto se crea un usuario administrador
 - Generar el token con el siguiente CURL:
@@ -85,3 +88,11 @@ Paso 6: Desde postman se puede importar los siguientes CURL:
    }
    ]
    }'`
+5. Para buscar por los parametros (*UTILIZAR EL TOKEN DEL ADMINISTRADOR*):
+   - estado de vacunación
+   - tipo de vacuna
+   - rango de fecha de vacunación
+   
+   `curl --location --request GET 'http://localhost:8081/api/employees/search?statusVaccine=VACCINATED&typeVaccine=Pfizer&dateFromVaccine=2020-01-01&dateToVaccine=2020-02-01' \
+   --header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJrQ2hhbW9ycm8iLCJyb2xlcyI6WyJST0xFX0FETUlOSVNUUkFUT1IiXSwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgxL2FwaS9sb2dpbiIsImV4cCI6MTY1NTc2NTE1OH0.BNKKXD54xdRV8kkVrZaVSEVJLLnZ8PDHNKNB0tvCoVQ' \
+   --header 'Cookie: JSESSIONID=5267C34455A30BD4747EBAFD983DEA88'`
